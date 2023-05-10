@@ -14,7 +14,15 @@ release = '1.0'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = []
+extensions = [
+    'recommonmark',
+    'sphinx.ext.githubpages'
+]
+
+source_suffix = {
+    ".md": "markdown",
+    ".rst": "restructuredtext"
+}
 
 templates_path = ['_templates']
 exclude_patterns = []
