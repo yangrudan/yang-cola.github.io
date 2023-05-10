@@ -1,0 +1,250 @@
+
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>二、环境搭建 &#8212; Loki Research 1.0 文档</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/translations.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="三、功能" href="function.html" />
+    <link rel="prev" title="一、介绍" href="intro.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="id1">
+<h1>二、环境搭建<a class="headerlink" href="#id1" title="此标题的永久链接">¶</a></h1>
+<section id="id2">
+<h2>1. 下载安装包<a class="headerlink" href="#id2" title="此标题的永久链接">¶</a></h2>
+<div class="highlight-commandline notranslate"><div class="highlight"><pre><span></span>curl -O -L &quot;https://github.com/grafana/loki/releases/download/v1.5.0/loki-linux-amd64.zip&quot; 
+curl -O -L &quot;https://github.com/grafana/loki/releases/download/v1.5.0/promtail-linux-amd64.zip&quot;
+wget https://dl.grafana.com/oss/release/grafana-7.1.0-1.x86_64.rpm
+</pre></div>
+</div>
+<p><img alt="img.png" src="img.png" /></p>
+</section>
+<section id="loki">
+<h2>2. Loki安装<a class="headerlink" href="#loki" title="此标题的永久链接">¶</a></h2>
+<div class="highlight-commandline notranslate"><div class="highlight"><pre><span></span>mkdir  /data/loki/{chunks,index}
+unzip loki-linux-amd64.zip
+mv  loki-linux-amd64 /data/loki/
+</pre></div>
+</div>
+<p>添加yaml文件, 内容如下：</p>
+<div class="highlight-commandline notranslate"><div class="highlight"><pre><span></span>auth_enabled: false
+
+server:
+  http_listen_port: 3100
+
+ingester:
+  lifecycler:
+    address: 127.0.0.1
+    ring:
+      kvstore:
+        store: inmemory
+      replication_factor: 1
+    final_sleep: 0s
+  chunk_idle_period: 5m
+  chunk_retain_period: 30s
+
+schema_config:
+  configs:
+  - from: 2023-05-07
+    store: boltdb
+    object_store: filesystem
+    schema: v11
+    index:
+      prefix: index_
+      period: 168h   #每张表的时间范围6天
+
+storage_config:
+  boltdb:
+    directory: index   #索引文件存储地址
+
+  filesystem:
+    directory: chunks  #块存储地址
+
+limits_config:
+  enforce_metric_name: false
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h
+
+
+chunk_store_config:
+  # 最大可查询历史日期 90天
+  max_look_back_period: 672h
+ 
+# 表的保留期90天
+table_manager:
+  retention_deletes_enabled: true
+  retention_period: 672h
+</pre></div>
+</div>
+<p><img alt="img_1.png" src="img_1.png" /></p>
+</section>
+<section id="promtail">
+<h2>3. promtail安装<a class="headerlink" href="#promtail" title="此标题的永久链接">¶</a></h2>
+<div class="highlight-commandline notranslate"><div class="highlight"><pre><span></span>mkdir  /data/promtail
+unzippromtail-linux-amd64.zip
+mv  promtail-linux-amd64   /data/promtail/
+</pre></div>
+</div>
+<p>添加yaml文件, 内容如下：</p>
+<div class="highlight-commandline notranslate"><div class="highlight"><pre><span></span>server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: ./positions.ymal
+  ignore_invalid_yaml: true
+
+clients:
+  - url: http://127.0.0.1:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: loki_log
+    file_sd_configs:
+      - files:
+        - ./conf/*.yaml
+        refresh_interval: 1m
+</pre></div>
+</div>
+<p>含义如下：
+<img alt="img_20.png" src="img_20.png" />
+并在conf目录添加log.yaml，加入日志目录，内容如下：</p>
+<div class="highlight-commandline notranslate"><div class="highlight"><pre><span></span>- targets:
+    - 127.0.0.1
+  labels:
+    host: 127.0.0.1
+    __path__: /home/yangrudan/Loki/data/tomcat/logs/*
+</pre></div>
+</div>
+<p><img alt="img_2.png" src="img_2.png" /></p>
+</section>
+<section id="grafana">
+<h2>4. Grafana安装<a class="headerlink" href="#grafana" title="此标题的永久链接">¶</a></h2>
+<p>双击deb文件进行安装</p>
+</section>
+<section id="id3">
+<h2>5. 启动<a class="headerlink" href="#id3" title="此标题的永久链接">¶</a></h2>
+<p>分部cd到loki、promtail目录，<code class="docutils literal notranslate"><span class="pre">依次启动loki、promtail、Grafana</span></code></p>
+<div class="highlight-commandline notranslate"><div class="highlight"><pre><span></span>nohup ./loki -config.file=./loki.yaml &gt; ./loki2.log 2&gt;&amp;1 &amp;
+
+nohup ./promtail -config.file=./promtail.yaml &gt; ./promtail2.log 2&gt;&amp;1 &amp;
+
+systemctl daemon-reload
+systemctl start grafana-server
+systemctl status grafana-server
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2>6. 进入Grafana界面<a class="headerlink" href="#id4" title="此标题的永久链接">¶</a></h2>
+<p><img alt="img_19.png" src="img_19.png" /></p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Loki Research</a></h1>
+
+
+
+
+
+
+
+
+<h3>导航</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">一、介绍</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">二、环境搭建</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">1. 下载安装包</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loki">2. Loki安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#promtail">3. promtail安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#grafana">4. Grafana安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">5. 启动</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">6. 进入Grafana界面</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="function.html">三、功能</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="intro.html" title="上一章">一、介绍</a></li>
+      <li>Next: <a href="function.html" title="下一章">三、功能</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="提交" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Cookie.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/environment.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

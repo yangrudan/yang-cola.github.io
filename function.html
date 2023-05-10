@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>三、功能 &#8212; Loki Research 1.0 文档</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/translations.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="prev" title="二、环境搭建" href="environment.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="id1">
+<h1>三、功能<a class="headerlink" href="#id1" title="此标题的永久链接">¶</a></h1>
+<section id="id2">
+<h2>1. 链接数据源<a class="headerlink" href="#id2" title="此标题的永久链接">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">添加loki数据源</span></code>
+<img alt="img_5.png" src="img_5.png" />
+<code class="docutils literal notranslate"><span class="pre">填写url</span></code>
+<img alt="img_6.png" src="img_6.png" />
+<code class="docutils literal notranslate"><span class="pre">save&amp;test</span></code>测试配置是否成功
+<img alt="img_7.png" src="img_7.png" /></p>
+</section>
+<section id="dashboard">
+<h2>2. 添加Dashboard<a class="headerlink" href="#dashboard" title="此标题的永久链接">¶</a></h2>
+<p>Grafana官网提供了很多<em>Dashboard</em>进行数据展示：
+<img alt="img_8.png" src="img_8.png" />
+筛选后可以通过<code class="docutils literal notranslate"><span class="pre">ID或者JSON文件</span></code>导入添加到Grafana平台。</p>
+</section>
+<section id="glog">
+<h2>3. Glog面板<a class="headerlink" href="#glog" title="此标题的永久链接">¶</a></h2>
+<p>promtail搜集的日志目录：
+<img alt="img_10.png" src="img_10.png" />
+glog的行数25*6 = 150 行
+<img alt="img_9.png" src="img_9.png" />
+<code class="docutils literal notranslate"><span class="pre">搜索功能</span></code>（查找到”85th”)
+<img alt="img_11.png" src="img_11.png" /></p>
+</section>
+<section id="pythonweb">
+<h2>4. python在Web中调用<a class="headerlink" href="#pythonweb" title="此标题的永久链接">¶</a></h2>
+<p>分享Dashboards的地址
+<img alt="img_12.png" src="img_12.png" />
+在python的html加入地址
+<img alt="img_13.png" src="img_13.png" />
+在自己项目的网页监控日志：
+<img alt="img_14.png" src="img_14.png" /></p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Loki Research</a></h1>
+
+
+
+
+
+
+
+
+<h3>导航</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">一、介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environment.html">二、环境搭建</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">三、功能</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">1. 链接数据源</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dashboard">2. 添加Dashboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#glog">3. Glog面板</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pythonweb">4. python在Web中调用</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="environment.html" title="上一章">二、环境搭建</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">快速搜索</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="提交" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Cookie.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/function.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
