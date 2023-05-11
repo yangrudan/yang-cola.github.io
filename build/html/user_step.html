@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="索引" href="genindex.html" /><link rel="search" title="搜索" href="search.html" /><link rel="next" title="二、环境搭建" href="environment.html" /><link rel="prev" title="Loki日志分析平台调研报告V1.0" href="index.html" />
+<link rel="index" title="索引" href="genindex.html" /><link rel="search" title="搜索" href="search.html" /><link rel="prev" title="三、功能介绍" href="function.html" />
 
     <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
-        <title>一、介绍 - Log Analysis V1.0 文档</title>
+        <title>四、使用步骤 - Log Analysis V1.0 文档</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -156,10 +156,10 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">一、介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">一、介绍</a></li>
 <li class="toctree-l1"><a class="reference internal" href="environment.html">二、环境搭建</a></li>
 <li class="toctree-l1"><a class="reference internal" href="function.html">三、功能介绍</a></li>
-<li class="toctree-l1"><a class="reference internal" href="user_step.html">四、使用步骤</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">四、使用步骤</a></li>
 </ul>
 
 </div>
@@ -195,42 +195,40 @@
         </div>
         <article role="main">
           <section id="id1">
-<h1>一、介绍<a class="headerlink" href="#id1" title="此标题的永久链接">#</a></h1>
-<section id="loki">
-<h2>1. loki简介<a class="headerlink" href="#loki" title="此标题的永久链接">#</a></h2>
-<p><strong>Loki</strong>是由Grafana Labs团队开源的的多租户日志聚合系统。 开发语言: Google Go。使用标签来作为索引，而不是对全文进行检索。系统架构由以下3个部分组成 ：
-<img alt="img_4.png" src="_images/img_4.png" /></p>
-<ol class="arabic simple">
-<li><p><strong>Loki</strong> 是主服务器，负责存储日志和处理查询 。</p></li>
-<li><p><strong>promtail</strong> 是代理，负责收集日志并将其发送给 loki 。</p></li>
-<li><p><strong>Grafana</strong> 用于 UI 展示。</p></li>
-</ol>
-</section>
+<h1>四、使用步骤<a class="headerlink" href="#id1" title="此标题的永久链接">#</a></h1>
 <section id="id2">
-<h2>2. loki架构<a class="headerlink" href="#id2" title="此标题的永久链接">#</a></h2>
-<p><img alt="img_3.png" src="_images/img_3.png" />
-<strong>写入路径</strong>（红色）和<strong>读取路径</strong>（蓝色）分离；</p>
-<section id="distributor">
-<h3>Distributor<a class="headerlink" href="#distributor" title="此标题的永久链接">#</a></h3>
-<p>一旦 promtail 收集日志并将其发送到 Loki，分发器就是第一个接收日志的组件。现在我们每秒可以接收数百万次写入，我们不想在它们进入时将它们写入数据库。那会杀死那里的任何数据库。我们需要在数据传入时对其进行批处理和压缩。
-<img alt="img_15.png" src="_images/img_15.png" />
-我们通过构建压缩的数据块来实现这一点，方法是在日志进入时对其进行 gzip 压缩。 ingester 组件是一个有状态的组件，负责构建然后刷新数据块。我们有多个摄取器，属于每个流的日志应该始终在同一个摄取器中结束，以便所有相关条目在同一个块中结束。我们通过构建一个摄取器环并使用一致性哈希来做到这一点。当一个条目进来时，分发器对日志的标签进行哈希处理，然后根据哈希值查找将条目发送到哪个 Ingester。</p>
+<h2>1. 链接数据源<a class="headerlink" href="#id2" title="此标题的永久链接">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">添加loki数据源</span></code>
+<img alt="img_5.png" src="_images/img_5.png" />
+<code class="docutils literal notranslate"><span class="pre">填写url</span></code>
+<img alt="img_6.png" src="_images/img_6.png" />
+<code class="docutils literal notranslate"><span class="pre">save&amp;test</span></code>测试配置是否成功
+<img alt="img_7.png" src="_images/img_7.png" /></p>
 </section>
-<section id="ingester">
-<h3>Ingester<a class="headerlink" href="#ingester" title="此标题的永久链接">#</a></h3>
-<p>这基本上是 gzip 日志并附加它们。一旦块“填满”，我们将其刷新到数据库。我们为块 (ObjectStorage) 和索引使用单独的数据库，因为它们存储的数据类型不同。
-<img alt="img_16.png" src="_images/img_16.png" />
-<img alt="img_17.png" src="_images/img_17.png" /></p>
+<section id="dashboard">
+<h2>2. 添加Dashboard<a class="headerlink" href="#dashboard" title="此标题的永久链接">#</a></h2>
+<p>Grafana官网提供了很多<em>Dashboard</em>进行数据展示：
+<img alt="img_8.png" src="_images/img_8.png" />
+筛选后可以通过<code class="docutils literal notranslate"><span class="pre">ID或者JSON文件</span></code>导入添加到Grafana平台。</p>
+<p><em><strong>按项目需求定制化Dashboard</strong></em></p>
 </section>
-<section id="querier">
-<h3>Querier<a class="headerlink" href="#querier" title="此标题的永久链接">#</a></h3>
-<p>让查询器完成大部分繁重的工作。给定一个时间范围和标签选择器，它会查看索引以确定哪些块匹配，然后通过它们进行 greps 以提供结果。它还与Ingester对话以获取尚未刷新的最新数据。
-<img alt="img_18.png" src="_images/img_18.png" /></p>
+<section id="glog">
+<h2>3. Glog面板<a class="headerlink" href="#glog" title="此标题的永久链接">#</a></h2>
+<p>promtail搜集的日志目录：
+<img alt="img_10.png" src="_images/img_10.png" />
+glog的行数25*6 = 150 行
+<img alt="img_9.png" src="_images/img_9.png" />
+<code class="docutils literal notranslate"><span class="pre">搜索功能</span></code>（查找到”85th”)
+<img alt="img_11.png" src="_images/img_11.png" /></p>
 </section>
-</section>
-<section id="id3">
-<h2>3. 参考链接<a class="headerlink" href="#id3" title="此标题的永久链接">#</a></h2>
-<p><a class="reference external" href="https://grafana.com/blog/2018/12/12/loki-prometheus-inspired-open-source-logging-for-cloud-natives/">Loki: open source logging for cloud natives</a></p>
+<section id="pythonweb">
+<h2>4. python在Web中调用<a class="headerlink" href="#pythonweb" title="此标题的永久链接">#</a></h2>
+<p>分享Dashboards的地址
+<img alt="img_12.png" src="_images/img_12.png" />
+在python的html加入地址
+<img alt="img_13.png" src="_images/img_13.png" />
+在自己项目的网页监控日志：
+<img alt="img_14.png" src="_images/img_14.png" /></p>
 </section>
 </section>
 
@@ -239,23 +237,15 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="environment.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">二、环境搭建</div>
-              </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="index.html">
+          
+          <a class="prev-page" href="function.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Home</div>
+                <div class="title">三、功能介绍</div>
                 
               </div>
             </a>
@@ -289,15 +279,11 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">一、介绍</a><ul>
-<li><a class="reference internal" href="#loki">1. loki简介</a></li>
-<li><a class="reference internal" href="#id2">2. loki架构</a><ul>
-<li><a class="reference internal" href="#distributor">Distributor</a></li>
-<li><a class="reference internal" href="#ingester">Ingester</a></li>
-<li><a class="reference internal" href="#querier">Querier</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#id3">3. 参考链接</a></li>
+<li><a class="reference internal" href="#">四、使用步骤</a><ul>
+<li><a class="reference internal" href="#id2">1. 链接数据源</a></li>
+<li><a class="reference internal" href="#dashboard">2. 添加Dashboard</a></li>
+<li><a class="reference internal" href="#glog">3. Glog面板</a></li>
+<li><a class="reference internal" href="#pythonweb">4. python在Web中调用</a></li>
 </ul>
 </li>
 </ul>

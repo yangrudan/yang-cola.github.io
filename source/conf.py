@@ -6,18 +6,16 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'Loki Research'
-copyright = '2023, Cookie'
-author = 'Cookie'
-release = '1.0'
+project = 'Log Analysis'
+copyright = '2023, Cookie Yang'
+author = 'Cookie Yang'
+release = 'V1.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = [
-    'recommonmark',
-    'sphinx.ext.githubpages'
-]
+extensions = ['myst_parser']
+html_theme = 'sphinx_rtd_theme'
 
 source_suffix = {
     ".md": "markdown",
@@ -32,5 +30,5 @@ language = 'zh_CN'
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'alabaster'
+html_theme = 'furo'
 html_static_path = ['_static']
